@@ -348,6 +348,24 @@ suite('QueryBuilder', () => {
 			].forEach(([includePattern, expectedPatterns]) => testSimpleIncludes(<string>includePattern, <string[]>expectedPatterns));
 		});
 
+		test.only('double-star patterns are normalized', () => {
+			function testLiteralIncludes(includePattern: string, expectedPattern: string): void {
+				assert.deepEqual(
+					queryBuilder.parseSearchPaths(includePattern),
+					<ISearchPathsResult>{
+						pattern: patternsToIExpression(expectedPattern)
+					},
+					includePattern);
+			}
+
+			[
+				['**/*.*', '{**/*.*/**,**/*.*}'],
+				['foo/**', '{**/foo/**,**/foo/**}'],
+				['**/**/foo', '{**/foo/**,**/foo}'],
+				['**/**', '{**,**}']
+			].forEach(([includePattern, expectedPattern]) => testLiteralIncludes(includePattern, expectedPattern));
+		});
+
 		function testIncludes(includePattern: string, expectedResult: ISearchPathsResult): void {
 			assertEqualSearchPathResults(
 				queryBuilder.parseSearchPaths(includePattern),
