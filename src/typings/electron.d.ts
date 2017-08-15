@@ -2502,7 +2502,7 @@ declare namespace Electron {
 
 	type MenuItemType = 'normal' | 'separator' | 'submenu' | 'checkbox' | 'radio';
 	type MenuItemRole = 'undo' | 'redo' | 'cut' | 'copy' | 'paste' | 'pasteandmatchstyle' | 'selectall' | 'delete' | 'minimize' | 'close' | 'quit' | 'togglefullscreen' | 'resetzoom' | 'zoomin' | 'zoomout';
-	type MenuItemRoleMac = 'about' | 'hide' | 'hideothers' | 'unhide' | 'startspeaking' | 'stopspeaking' | 'front' | 'zoom' | 'window' | 'help' | 'services';
+	type MenuItemRoleMac = 'about' | 'hide' | 'hideothers' | 'unhide' | 'startspeaking' | 'stopspeaking' | 'front' | 'zoom' | 'window' | 'help' | 'services' | 'toggletabbar' | 'selectprevioustab' | 'selectnexttab' | 'movetabtonewwindow' | 'mergeallwindows';
 
 	interface MenuItemOptions {
 		/**
