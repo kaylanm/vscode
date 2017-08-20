@@ -32,6 +32,7 @@ interface IExtensionViewlet {
 interface IConfiguration extends IFilesConfiguration {
 	window: {
 		enableMenuBarMnemonics: boolean;
+		nativeTabs: boolean;
 	};
 	workbench: {
 		sideBar: {
@@ -61,6 +62,7 @@ export class CodeMenu {
 	private currentStatusbarVisible: boolean;
 	private currentActivityBarVisible: boolean;
 	private currentEnableMenuBarMnemonics: boolean;
+	private currentNativeTabs: boolean;
 
 	private isQuitting: boolean;
 	private appMenuInstalled: boolean;
@@ -180,6 +182,15 @@ export class CodeMenu {
 		}
 		if (newEnableMenuBarMnemonics !== this.currentEnableMenuBarMnemonics) {
 			this.currentEnableMenuBarMnemonics = newEnableMenuBarMnemonics;
+			updateMenu = true;
+		}
+
+		let newNativeTabs = config && config.window && config.window.nativeTabs;
+		if (typeof newNativeTabs !== 'boolean') {
+			newNativeTabs = false;
+		}
+		if (newNativeTabs !== this.currentNativeTabs) {
+			this.currentNativeTabs = newNativeTabs;
 			updateMenu = true;
 		}
 
@@ -856,6 +867,8 @@ export class CodeMenu {
 	}
 
 	private setMacWindowMenu(macWindowMenu: Electron.Menu): void {
+		const nativeTabs = this.currentNativeTabs;
+
 		const minimize = new MenuItem({ label: nls.localize('mMinimize', "Minimize"), role: 'minimize', accelerator: 'Command+M', enabled: this.windowsService.getWindowCount() > 0 });
 		const zoom = new MenuItem({ label: nls.localize('mZoom', "Zoom"), role: 'zoom', enabled: this.windowsService.getWindowCount() > 0 });
 		const bringAllToFront = new MenuItem({ label: nls.localize('mBringToFront', "Bring All to Front"), role: 'front', enabled: this.windowsService.getWindowCount() > 0 });
@@ -866,18 +879,18 @@ export class CodeMenu {
 		const moveTabToNewWindow = new MenuItem({ label: nls.localize('mMoveTabToNewWindow', "Move Tab To New Window"), role: 'movetabtonewwindow' });
 		const mergeAllWindows = new MenuItem({ label: nls.localize('mMergeAllWindows', "Merge All Windows"), role: 'mergeallwindows' });
 
-		[
+		arrays.coalesce([
 			minimize,
 			zoom,
 			switchWindow,
 			__separator__(),
-			showPreviousTab,
-			showNextTab,
-			moveTabToNewWindow,
-			mergeAllWindows,
-			__separator__(),
+			nativeTabs ? showPreviousTab : null,
+			nativeTabs ? showNextTab : null,
+			nativeTabs ? moveTabToNewWindow : null,
+			nativeTabs ? mergeAllWindows : null,
+			nativeTabs ? __separator__() : null,
 			bringAllToFront
-		].forEach(item => macWindowMenu.append(item));
+		]).forEach(item => macWindowMenu.append(item));
 	}
 
 	private toggleDevTools(): void {
